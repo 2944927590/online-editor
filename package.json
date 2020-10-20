@@ -1,0 +1,55 @@
+{
+  "name": "online-editor",
+  "version": "0.1.0",
+  "description": "online-editor",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.dev.js",
+    "build": "cross-env NODE_ENV=production webpack --config webpack.config.pro.js"
+  },
+  "keywords": [
+    "online-editor"
+  ],
+  "author": "alsy",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/runtime": "^7.12.1",
+    "@babel/runtime-corejs3": "^7.12.1",
+    "autoprefixer": "^9.7.5",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-component": "^1.1.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^5.1.1",
+    "cross-env": "^6.0.3",
+    "css-loader": "^3.4.2",
+    "file-loader": "^6.0.0",
+    "html-loader": "^1.1.0",
+    "html-webpack-plugin": "^4.0.2",
+    "less": "^3.11.1",
+    "less-loader": "^5.0.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "minimize": "^2.2.0",
+    "monaco-editor-vue": "^1.0.10",
+    "monaco-editor-webpack-plugin": "^2.0.0",
+    "node-sass": "^4.13.1",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^8.0.2",
+    "scss-loader": "0.0.1",
+    "style-loader": "^1.1.3",
+    "url-loader": "^4.0.0",
+    "vue-loader": "^15.9.1",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3",
+    "webpack-merge": "^4.2.2"
+  },
+  "dependencies": {
+    "element-ui": "^2.13.2",
+    "vue": "^2.6.11"
+  }
+}
