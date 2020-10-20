@@ -70,7 +70,7 @@
       return {
         codeStr: '',
         // 编辑器设置
-        language: 'html',	 //语言	
+        language: 'html',   //语言  
         languageOptions,
         highlightLines: [{ number: 0, class: 'red' }],  //高亮
         curTheme: 'vs',
@@ -79,14 +79,14 @@
           foldingStrategy: 'indentation', // 代码可分小段折叠 
           autoClosingBrackets: true, 
           selectOnLineNumbers: false,
-				  roundedSelection: false,
-				  readOnly: false,		// 只读
-				  cursorStyle: 'line',		//光标样式
-				  automaticLayout: true,	//自动布局
-				  glyphMargin: true,  //字形边缘
-				  useTabStops: false,
-				  fontSize: 12,		//字体大小
-				  quickSuggestionsDelay: 500,	//代码提示延时
+          roundedSelection: false,
+          readOnly: false,    // 只读
+          cursorStyle: 'line',    //光标样式
+          automaticLayout: true,  //自动布局
+          glyphMargin: true,  //字形边缘
+          useTabStops: false,
+          fontSize: 12,    //字体大小
+          quickSuggestionsDelay: 500,  //代码提示延时
         }
       }
     },
