@@ -9,15 +9,46 @@ const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const dir = fs.readdirSync(path.resolve(__dirname, 'src/'));
 const isProduction = process.env.NODE_ENV == 'production';
 const config = require('./public/config')[isProduction ? 'build' : 'dev'];
 
+// [ 'index-entry.js', 'preview-entry.js' ]
+function entryFileList(dirPath = 'src/') {
+  const fileList = fs.readdirSync(path.resolve(__dirname, dirPath));
+  return fileList.filter(file => {
+    return /entry.(js|ts)/.test(file);
+  });
+}
+ 
+function buildEntry(dirPath = 'src/') {
+  const fileList = entryFileList(dirPath);
+  const entry = fileList.reduce((res, next) => {
+    const entryName = next.split('.')[0].replace('-entry', '');
+    res[entryName] = path.resolve(__dirname, dirPath + next);
+    return res;
+  }, {});
+  return entry;
+}
+
+function buildHtml() {
+  const fileList = entryFileList();
+  return fileList.map(file => {
+    const entryName = file.split('.')[0].replace('-entry', '');
+    return new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'public/'+ entryName +'.html'), // 指定模板文件，不指定会生成默认的 index.html 文件
+      filename: entryName + '.html', // 打包后的文件名
+      chunks: [entryName],
+      minify: {
+        removeAttributeQuotes: false, // 是否删除属性的双引号
+        collapseWhitespace: isProduction, // 是否折叠空白
+      },
+      config: config.template
+    }) 
+  });
+}
+
 module.exports = {
-  entry: {
-    index: path.resolve(__dirname, 'src/index-entry.js'),
-    preview: path.resolve(__dirname, 'src/preview-entry.js')
-  },
+  entry: buildEntry(),
   output: {
     path: path.resolve(__dirname, 'dist'), // 输出目录
     filename: isProduction ? '[name].[chunkhash:6].js' : '[name].[hash:6].js', // 输出文件名
@@ -29,21 +60,68 @@ module.exports = {
       '@src': path.resolve(__dirname, 'src'), // 为src目录添加别名
       'vue$': 'vue/dist/vue.esm.js' // compiler model
     },
-    extensions: ['.ts', '.js', '.json'], // 从左往右
+    extensions: ['.ts', '.tsx', '.js', '.json'], // 从左往右
     mainFields: ['browser', 'main']
   },
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.jsx?$/,
         use: ['babel-loader']
       },
+      { 
+        test: /\.tsx?$/,
+        use: ['ts-loader']
+      },
       {
         test: /\.(c|le)ss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'less-loader']
+        oneOf: [
+          // `<style>` in Vue components
+          {
+            resourceQuery: /^\?vue/,
+            loader: [
+              { loader: 'style-loader' },
+              { loader: 'css-loader' },
+              { loader: 'postcss-loader' },
+              { loader: 'less-loader' }
+            ]
+          },
+          {
+            loader: [
+              !isProduction ? { loader: 'style-loader' } : MiniCssExtractPlugin.loader,
+              { loader: 'css-loader' },
+              { loader: 'postcss-loader' },
+              { loader: 'less-loader' }
+            ]
+          }
+        ]
       },
       {
         test: /\.s(c|a)ss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
+        oneOf: [
+          // `<style>` in Vue components
+          {
+            resourceQuery: /^\?vue/,
+            loader: [
+              { loader: 'style-loader' },
+              { loader: 'css-loader' },
+              { loader: 'postcss-loader' },
+              { loader: 'sass-loader' }
+            ]
+          },
+          {
+            loader: [
+              !isProduction ? { loader: 'style-loader' } : MiniCssExtractPlugin.loader,
+              { loader: 'css-loader' },
+              { loader: 'postcss-loader' },
+              { loader: 'sass-loader' }
+            ]
+          }
+        ]
+      },
+      {
+        test: /\.vue$/,
+        use: ['vue-loader']
       },
       {
         test: /\.(jpe?g|png|gif|webp|svg|eot|ttf|woff|woff2)$/i,
@@ -56,10 +134,6 @@ module.exports = {
             esModule: false // 表示是否使用es6模块的导出，默认是启用的
           }
         }]
-      },
-      {
-        test: /\.vue$/,
-        use: ['vue-loader']
       }
     ]
   },
@@ -72,7 +146,7 @@ module.exports = {
           name: 'vendor',
           test: /node_modules/,
           chunks: 'initial',
-          minSize: 0,
+          minSize: 100, //大小超过100个字节
           minChunks: 1 //最少引入了1次
         },
         // 缓存组
@@ -81,34 +155,13 @@ module.exports = {
           chunks: 'initial',
           name: 'common',
           minSize: 100, //大小超过100个字节
-          minChunks: 2 //最少引入了1次
+          minChunks: 1 //最少引入了1次
         }
       }
     }
   },
   plugins: [
-    // index.html
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'public/index.html'), // 指定模板文件，不指定会生成默认的 index.html 文件
-      filename: 'index.html', // 打包后的文件名
-      chunks: ['index'],
-      minify: {
-        removeAttributeQuotes: false, // 是否删除属性的双引号
-        collapseWhitespace: isProduction, // 是否折叠空白
-      },
-      config: config.template
-    }),
-    // preview.html
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'public/preview.html'), // 指定模板文件，不指定会生成默认的 index.html 文件
-      filename: 'preview.html', // 打包后的文件名
-      chunks: ['preview'],
-      minify: {
-        removeAttributeQuotes: false, // 是否删除属性的双引号
-        collapseWhitespace: isProduction, // 是否折叠空白
-      },
-      config: config.template
-    }),
+    ...buildHtml(),
     new VueLoaderPlugin(),
     // 打包前自动清除dist目录
     new CleanWebpackPlugin(),

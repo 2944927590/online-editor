@@ -4,7 +4,7 @@
       <el-row>
         <el-col :span="12">
           <div>
-            <span>主题切换：</span>
+            <span class="title">主题切换：</span>
             <el-radio-group v-model="curTheme">
               <el-radio v-for="item in themeOptions" :key="item" :label="item" >{{ item }}</el-radio>
             </el-radio-group>
@@ -13,6 +13,7 @@
         <el-col :span="12">
           <div>
             <el-button type="text" @click="runCode">刷新</el-button>
+            <el-button type="text" @click="elementUIDoc">element-ui 文档</el-button>
           </div>
         </el-col>
         <el-col :span="12">
@@ -36,7 +37,7 @@
             ref="previewPage"
             class="result-wrapper"
             frameborder="0"
-            src="/preview.html"
+            src="./preview.html"
             @load="iframeLoad">
           </iframe>
         </el-col>
@@ -90,9 +91,6 @@
         }
       }
     },
-    mounted() {
-      this.init();
-    },
     watch: {
       sourceCode: {
         handler() {
@@ -104,10 +102,13 @@
     },
     methods: {
       iframeLoad() {
-        console.log('reload');
+        this.runCode();
+      },
+      elementUIDoc() {
+        window.open('https://element.eleme.io/#/zh-CN/component/button');
       },
       onMounted() {
-        this.runCode();
+        this.init();
       },
       onCodeChange(value) {
         this.codeStr = value;
@@ -144,5 +145,10 @@
 <style lang="scss">
   .editor-online {
     background: #fff;
+    padding: 20px;
+
+    .title {
+      font-size: 14px;
+    }
   }
 </style>
