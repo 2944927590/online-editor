@@ -5,7 +5,7 @@ const baseConfig = require('./webpack.config.base');
 
 module.exports = merge(baseConfig, {
   mode: 'production',
-  devtool: 'source-map',
+  devtool: '',
   output: {
     path: path.resolve(__dirname, 'dist'), // 输出目录
     filename: '[name].[chunkhash:6].js', // 输出文件名

@@ -39,11 +39,11 @@ function init(event) {
 }
 
 function createObject(body) {
-  return (new Function('', `return ${body}`))();
+  return (new Function(body))();
 }
 
 function newVue(script, template) {
-  script = createObject(`(${script})`);
+  script = createObject(script);
   script.template = `<div>${template}</div>`
   new Vue({
     ...script

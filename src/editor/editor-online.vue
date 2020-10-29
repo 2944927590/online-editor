@@ -119,7 +119,6 @@
         this.runCode();
       },
       runCode() {
-        this.codeStr = this.codeStr.replace()
         const parseObj = parse(this.codeStr);
         parseObj.script = parseObj.script.replace(/import[^\;]*\;/igm, '');
         parseObj.script = parseObj.script.replace(/components[^\}]*\}\,/igm, '');
@@ -127,7 +126,7 @@
           type: 'refreshFrame',
           data: {
             template: parseObj.template,
-            script: parseObj.script.replace('export default ', ''),
+            script: parseObj.script.replace('export default ', 'return '),
             styles: parseObj.styles.join('')
           }
         }

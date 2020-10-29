@@ -164,11 +164,7 @@ module.exports = {
     ...buildHtml(),
     new VueLoaderPlugin(),
     // 打包前自动清除dist目录
-    new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin({
-      filename: 'css/[name].[contenthash:6].css',
-      chunkFilename: 'css/[name].[hash:8].css'
-    }),
+    isProduction ? new CleanWebpackPlugin() : null,
     new OptimizeCssPlugin(),
     new CopyWebpackPlugin([{
       from: path.resolve(__dirname, 'images'),
@@ -178,5 +174,5 @@ module.exports = {
       languages: ['html'],
       features: ['coreCommands', 'find']
     })
-  ]
+  ].filter(Boolean)
 }
