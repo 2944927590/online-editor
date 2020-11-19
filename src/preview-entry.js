@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import { loadScriptQueue } from './editor/utils/load-script.js';
+import {
+  loadScriptQueue
+} from './editor/utils/load-script.js';
 
 Vue.use(ElementUI);
 
@@ -39,7 +41,16 @@ function init(event) {
 }
 
 function createObject(body) {
-  return (new Function(body))();
+  const script = `
+    try {
+      var exports = {};
+      ${body};
+      return exports.default;
+    } catch(err) {
+      console.log(err);
+    }
+  `;
+  return (new Function(script))();
 }
 
 function newVue(script, template) {
